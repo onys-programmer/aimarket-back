@@ -85,8 +85,8 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  if (!existingUser) {
-    const error = new HttpError('Invalid credentials, could not log you in.', 401);
+  if (existingUser === null) {
+    const error = new HttpError('there is no user that email, could not log you in.', 401);
     return next(error);
   }
 
