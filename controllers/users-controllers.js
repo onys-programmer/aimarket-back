@@ -20,7 +20,7 @@ const generateToken = async (user) => {
   return token;
 }
 
-const signup = async (req, res, next) => {
+const signUp = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
@@ -32,14 +32,14 @@ const signup = async (req, res, next) => {
 
   let existingUser;
   try {
-    existingUser = User.findOne({ email: email });
+    existingUser = await User.findOne({ email: email });
   } catch (err) {
     const error = new HttpError('Signing up failed, please try again later.', 500);
     return next(error);
   }
 
-  if (existingUser) {
-    const error = new HttpError('That Email is already used, please try again with other email.', 500);
+  if (existingUser !== null) {
+    const error = new HttpError(`That Email is already used, please try again with other email: ${existingUser}`, 500);
     return next(error);
   }
 
@@ -47,7 +47,7 @@ const signup = async (req, res, next) => {
   try {
     hashedPassword = await bcrypt.hash(password, 12);
   } catch (err) {
-    const error = new HttpError('Failed to hash password, please try again.', 500);
+    const error = new HttpError(`Failed to hash password, please try again: ${err}`, 500);
     return next(error);
   }
 
@@ -111,5 +111,5 @@ const login = async (req, res, next) => {
   });
 };
 
-exports.signup = signup;
+exports.signUp = signUp;
 exports.login = login;
