@@ -1,28 +1,27 @@
-const multer = require('multer');
-const { v1: uuidv1 } = require('uuid');
+const uploadToS3 = async (req, res, next) => {
+  if (!req.file) {
+    return next(new Error("No image provided."));
+  }
 
-const MIME_TYPE_MAP = {
-  'image/png': 'png',
-  'image/jpeg': 'jpeg',
-  'image/jpg': 'jpg',
+  const imageKey = `${uuidv4()}-${image.originalname}`;
+  const fileContent = image.buffer; // Use the buffer property of the file instead of fs.readFileSync
+  const uploadParams = {
+    Bucket: "webdokkaebi-kmong",
+    Key: `aimarket/post-images/originals/${imageKey}`,
+    Body: fileContent,
+  };
+
+  try {
+    const s3Result = await s3.upload(uploadParams).promise();
+    req.body.image = s3Result.Location;
+    next();
+  } catch (err) {
+    const error = new HttpError(
+      `Uploading image failed, please try again. : ${err}`,
+      500
+    );
+    return next(error);
+  }
 };
 
-const fileUpload = multer({
-  limits: 10000000, // 10MB
-  storage: multer.diskStorage({
-    destination: (req, file, callback) => {
-      callback(null, 'uploads/images');
-    },
-    filename: (req, file, callback) => {
-      const extension = MIME_TYPE_MAP[file.mimetype];
-      callback(null, uuidv1() + '.' + extension);
-    },
-  }),
-  fileFilter: (req, file, callback) => {
-    const isValid = !!MIME_TYPE_MAP[file.mimetype];
-    let error = isValid ? null : new Error('Invalid mime type!');
-    callback(error, isValid);
-  },
-});
-
-module.exports = fileUpload;
+module.exports = uploadToS3;

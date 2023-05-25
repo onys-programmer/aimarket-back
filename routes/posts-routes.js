@@ -1,5 +1,5 @@
-const express = require('express');
-const { check } = require('express-validator');
+const express = require("express");
+const { check } = require("express-validator");
 
 const {
   createPost,
@@ -7,30 +7,29 @@ const {
   getPostById,
   getPostsByUserId,
   updatePost,
-  deletePost
-} = require('../controllers/posts-controllers');
+  deletePost,
+} = require("../controllers/posts-controllers");
 
-const fileUpload = require('../middleware/file-upload');
-
-const checkAuth = require('../middleware/check-auth');
+const checkAuth = require("../middleware/check-auth");
+const checkFileExtension = require("../middleware/check-file-extension");
+const uploadToS3 = require("../middleware/file-upload");
 
 const router = express.Router();
 
-router.get('/', getPosts);
-router.get('/:pid', getPostById);
-router.get('/user/:uid', getPostsByUserId);
+router.get("/", getPosts);
+router.get("/:pid", getPostById);
+router.get("/user/:uid", getPostsByUserId);
 
 router.use(checkAuth);
 
 router.post(
-  '/',
-  fileUpload.single('image'),
-  [
-    check('title').not().isEmpty()
-  ],
+  "/",
+  [check("title").not().isEmpty()],
+  checkFileExtension,
+  uploadToS3,
   createPost
 );
-router.patch('/:pid', updatePost);
-router.delete('/:pid', deletePost);
+router.patch("/:pid", updatePost);
+router.delete("/:pid", deletePost);
 
 module.exports = router;
