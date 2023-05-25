@@ -10,7 +10,21 @@ const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
 
-router.post('/signup', signUp);
-router.post('/login', login);
+router.post(
+  '/signup',
+  [
+    check('email').normalizeEmail().isEmail(),
+    check('password').isLength({ min: 6 }),
+  ],
+  signUp
+);
+router.post(
+  '/login',
+  [
+    check('email').normalizeEmail().isEmail(),
+    check('password').not().isEmpty(),
+  ],
+  login
+);
 
 module.exports = router;

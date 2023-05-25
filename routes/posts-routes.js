@@ -10,6 +10,8 @@ const {
   deletePost
 } = require('../controllers/posts-controllers');
 
+const fileUpload = require('../middleware/file-upload');
+
 const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
@@ -20,7 +22,14 @@ router.get('/user/:uid', getPostsByUserId);
 
 router.use(checkAuth);
 
-router.post('/', createPost);
+router.post(
+  '/',
+  fileUpload.single('image'),
+  [
+    check('title').not().isEmpty()
+  ],
+  createPost
+);
 router.patch('/:pid', updatePost);
 router.delete('/:pid', deletePost);
 
