@@ -31,7 +31,7 @@ router.post(
 
 router.use(checkAuth);
 
-router.patch("/:uid", changePassword);
-router.delete("/:uid", deleteUser);
+router.patch("/", changePassword);
+router.delete("/", deleteUser);
 
 module.exports = router;

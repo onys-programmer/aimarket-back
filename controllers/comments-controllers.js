@@ -6,12 +6,12 @@ const Comment = require("../models/comment");
 const mongoose = require("mongoose");
 
 const createComment = async (req, res, next) => {
-  // const errors = validationResult(req);
-  // if (!errors.isEmpty()) {
-  //   return next(
-  //     new HttpError(`createPost: Invalid inputs passed, please check your data}`, 400)
-  //   );
-  // }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError(`createComment: Invalid inputs passed, please check your data}`, 400)
+    );
+  }
 
   const { content, creator, postId } = req.body;
 
@@ -43,8 +43,8 @@ const createComment = async (req, res, next) => {
 
     const createdComment = new Comment({
       content,
-      creator: user,
-      post,
+      creator,
+      post: post.id,
       createdAt: new Date(),
     });
 
@@ -142,7 +142,6 @@ const updateComment = async (req, res, next) => {
 
 const deleteComment = async (req, res, next) => {
   const commentId = req.params.cid;
-  const { postId } = req.body;
 
   let comment;
   try {
@@ -163,25 +162,6 @@ const deleteComment = async (req, res, next) => {
     return next(error);
   }
 
-  let post;
-  try {
-    post = await Post.findById(postId);
-  } catch (err) {
-    const error = new HttpError(
-      "deleteComment: Could not find post for the provided id.",
-      404
-    );
-    return next(error);
-  }
-
-  if (!post) {
-    const error = new HttpError(
-      "deleteComment: Could not find post for this id.",
-      404
-    );
-    return next(error);
-  }
-
   if (comment.creator.id !== req.userData.userId) {
     const error = new HttpError(
       "deleteComment: You are not allowed to delete this comment.",
@@ -193,13 +173,10 @@ const deleteComment = async (req, res, next) => {
   try {
     const session = await mongoose.startSession();
     session.startTransaction();
-    await comment.remove({ session: session });
+    await comment.deleteOne({ session: session });
 
     comment.creator.comments.pull(comment);
     await comment.creator.save({ session: session });
-
-    comment.post.comments.pull(comment);
-    await comment.post.save({ session: session });
 
     await session.commitTransaction();
   } catch (err) {

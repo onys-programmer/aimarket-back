@@ -186,7 +186,7 @@ const changePassword = async (req, res, next) => {
 };
 
 const deleteUser = async (req, res, next) => {
-  const userId = req.params.uid;
+  const { userId } = req.body;
 
   try {
     // Find the user by ID

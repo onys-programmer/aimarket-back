@@ -55,7 +55,7 @@ const getPostById = async (req, res, next) => {
   const postId = req.params.pid;
   let post;
   try {
-    post = await Post.findById(postId);
+    post = await Post.findById(postId).populate("comments");
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not find a post.",
