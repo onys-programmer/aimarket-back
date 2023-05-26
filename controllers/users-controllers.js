@@ -136,5 +136,80 @@ const login = async (req, res, next) => {
   });
 };
 
+const changePassword = async (req, res, next) => {
+  const { userId, currentPassword, newPassword } = req.body;
+
+  let user;
+  try {
+    user = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError("Failed to fetch user.", 500);
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError("User not found.", 404);
+    return next(error);
+  }
+
+  let isValidPassword;
+  try {
+    isValidPassword = await bcrypt.compare(currentPassword, user.password);
+  } catch (err) {
+    const error = new HttpError("Could not compare passwords.", 500);
+    return next(error);
+  }
+
+  if (!isValidPassword) {
+    const error = new HttpError("Invalid password.", 401);
+    return next(error);
+  }
+
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(newPassword, 12);
+  } catch (err) {
+    const error = new HttpError("Could not hash password.", 500);
+    return next(error);
+  }
+
+  user.password = hashedPassword;
+
+  try {
+    await user.save();
+  } catch (err) {
+    const error = new HttpError("Failed to change password.", 500);
+    return next(error);
+  }
+
+  res.status(200).json({ message: "Password changed successfully." });
+};
+
+const deleteUser = async (userId) => {
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new HttpError("User not found.", 404);
+    }
+
+    // Delete user's posts
+    await user.posts.remove();
+
+    // Delete user's comments
+    await user.comments.remove();
+
+    // Delete the user
+    await user.remove();
+
+    return true; // Return true to indicate successful deletion
+  } catch (err) {
+    throw new HttpError(`Deleting user failed. Error: ${err.message}`, 500);
+  }
+};
+
 exports.signUp = signUp;
 exports.login = login;
+exports.changePassword = changePassword;
+exports.deleteUser = deleteUser;

@@ -32,6 +32,7 @@ const createPost = async (req, res, next) => {
       description,
       image: originalImage,
       thumbnail: compressedImage,
+      createdAt: new Date(),
       creator,
     });
 
@@ -74,9 +75,15 @@ const getPostById = async (req, res, next) => {
 };
 
 const getPosts = async (req, res, next) => {
-  let posts;
+  const { page, perPage } = req.query;
+
+  // 페이지와 페이지당 게시물 수를 정수로 변환합니다.
+  const currentPage = parseInt(page) || 1;
+  const postsPerPage = parseInt(perPage) || 10;
+
+  let totalPosts;
   try {
-    posts = await Post.find();
+    totalPosts = await Post.countDocuments();
   } catch (err) {
     const error = new HttpError(
       "Fetching posts failed, please try again later.",
@@ -84,11 +91,29 @@ const getPosts = async (req, res, next) => {
     );
     return next(error);
   }
+
+  let posts;
+  try {
+    posts = await Post.find()
+      .skip((currentPage - 1) * postsPerPage)
+      .limit(postsPerPage);
+  } catch (err) {
+    const error = new HttpError(
+      "Fetching posts failed, please try again later.",
+      500
+    );
+    return next(error);
+  }
+
   if (!posts) {
     return next(new HttpError("Could not find posts.", 404));
   }
 
-  res.json({ posts: posts.map((post) => post.toObject({ getters: true })) });
+  res.json({
+    posts: posts.map((post) => post.toObject({ getters: true })),
+    currentPage,
+    totalPages: Math.ceil(totalPosts / postsPerPage),
+  });
 };
 
 const getPostsByUserId = async (req, res, next) => {
@@ -145,6 +170,7 @@ const updatePost = async (req, res, next) => {
   post.title = title;
   post.image = image;
   post.description = description;
+  post.updatedAt = new Date();
 
   try {
     await post.save();
@@ -182,8 +208,10 @@ const deletePost = async (req, res, next) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     await post.remove({ session: session });
+
     post.creator.posts.pull(post);
     await post.creator.save({ session: session });
+
     await session.commitTransaction();
   } catch (err) {
     const error = new HttpError(
