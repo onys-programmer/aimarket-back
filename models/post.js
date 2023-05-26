@@ -8,6 +8,7 @@ const postSchema = new Schema({
   image: { type: String, required: true },
   thumbnail: { type: String, required: true },
   creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
+  comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
 });
 
 module.exports = mongoose.model("Post", postSchema);
