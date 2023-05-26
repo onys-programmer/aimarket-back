@@ -1,5 +1,7 @@
 const express = require("express");
 const { check } = require("express-validator");
+const multer = require("multer");
+const upload = multer();
 
 const {
   createPost,
@@ -20,11 +22,13 @@ router.get("/", getPosts);
 router.get("/:pid", getPostById);
 router.get("/user/:uid", getPostsByUserId);
 
+
 router.use(checkAuth);
 
 router.post(
   "/",
   [check("title").not().isEmpty()],
+  upload.single("image"),
   checkFileExtension,
   uploadToS3,
   createPost
