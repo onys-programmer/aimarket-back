@@ -1,6 +1,6 @@
 const HttpError = require("../models/http-error");
-const uploadImage = require("./upload-image");
-const compressImage = require("./compress-image");
+const uploadImage = require("../utils/upload-image");
+const compressImage = require("../utils/compress-image");
 
 const uploadPostImage = async (req, res, next) => {
   const image = req.file;
