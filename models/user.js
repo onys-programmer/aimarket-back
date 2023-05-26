@@ -14,4 +14,16 @@ const userSchema = new Schema({
 
 userSchema.plugin(uniqueValidator);
 
+userSchema.pre("remove", async function (next) {
+  const user = this;
+
+  // Delete user's posts
+  await Post.deleteMany({ creator: user._id });
+
+  // Delete user's comments
+  await Comment.deleteMany({ creator: user._id });
+
+  next();
+});
+
 module.exports = mongoose.model("User", userSchema);

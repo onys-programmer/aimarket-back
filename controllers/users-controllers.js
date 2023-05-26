@@ -67,7 +67,7 @@ const signUp = async (req, res, next) => {
     name,
     email,
     image:
-      "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pngwing.com%2Fko%2Ffree-png-kgqjx&psig=AOvVaw0QZ2Z2Z2Z2Z2Z2Z2Z2Z2Z2&ust=1629786169124000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCJjQ4ZqHgvICFQAAAAAdAAAAABAD",
+      "https://i.pinimg.com/280x280_RS/6b/71/20/6b7120f396928249c8e50953e64d81f5.jpg",
     password: hashedPassword,
   });
 
@@ -185,27 +185,29 @@ const changePassword = async (req, res, next) => {
   res.status(200).json({ message: "Password changed successfully." });
 };
 
-const deleteUser = async (userId) => {
+const deleteUser = async (req, res, next) => {
+  const userId = req.params.uid;
+
   try {
     // Find the user by ID
     const user = await User.findById(userId);
 
     if (!user) {
-      throw new HttpError("User not found.", 404);
+      const error = new HttpError("User not found.", 404);
+      return next(error);
     }
 
-    // Delete user's posts
-    await user.posts.remove();
-
-    // Delete user's comments
-    await user.comments.remove();
-
     // Delete the user
-    await user.remove();
+    await user.deleteOne();
 
-    return true; // Return true to indicate successful deletion
+    res.status(200).json({ message: `User deleted.: ${userId}` });
+    next();
   } catch (err) {
-    throw new HttpError(`Deleting user failed. Error: ${err.message}`, 500);
+    const error = new HttpError(
+      `Deleting user failed. Error: ${err.message}`,
+      500
+    );
+    return next(error);
   }
 };
 
