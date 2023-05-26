@@ -12,8 +12,9 @@ const createPost = async (req, res, next) => {
   //   );
   // }
 
-  const { title, description, image, creator } = req.body;
-  console.log("image", image);
+  const { title, description, originalImage, compressedImage, creator } =
+    req.body;
+
   let user;
   try {
     user = await User.findById(creator);
@@ -29,7 +30,8 @@ const createPost = async (req, res, next) => {
     const createdPost = new Post({
       title,
       description,
-      image,
+      image: originalImage,
+      thumbnail: compressedImage,
       creator,
     });
 

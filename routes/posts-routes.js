@@ -14,14 +14,13 @@ const {
 
 const checkAuth = require("../middleware/check-auth");
 const checkFileExtension = require("../middleware/check-file-extension");
-const uploadToS3 = require("../middleware/file-upload");
+const uploadPostImage = require("../middleware/upload-post-image");
 
 const router = express.Router();
 
 router.get("/", getPosts);
 router.get("/:pid", getPostById);
 router.get("/user/:uid", getPostsByUserId);
-
 
 router.use(checkAuth);
 
@@ -30,7 +29,7 @@ router.post(
   [check("title").not().isEmpty()],
   upload.single("image"),
   checkFileExtension,
-  uploadToS3,
+  uploadPostImage,
   createPost
 );
 router.patch("/:pid", updatePost);
