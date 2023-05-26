@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require("uuid");
 const HttpError = require("../models/http-error");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
+const S3_BASE_URL = "https://webdokkaebi-kmong.s3.ap-northeast-2.amazonaws.com";
 const s3Client = new S3Client({
   region: "ap-northeast-2",
   credentials: {
@@ -30,7 +31,8 @@ const uploadToS3 = async (req, res, next) => {
   try {
     const putObjectCommand = new PutObjectCommand(uploadParams);
     const s3Result = await s3Client.send(putObjectCommand);
-    req.body.image = s3Result.Location;
+    console.log("s3Result", s3Result);
+    req.body.image = `${S3_BASE_URL}/${uploadParams.Key}`;
     console.log("uploadToS3");
     next();
   } catch (err) {

@@ -18,7 +18,7 @@ const checkFileExtension = (req, res, next) => {
     );
   }
 
-  console.log("checkFileExtension", image);
+  // console.log("checkFileExtension", image);
   // 허용된 확장자일 경우 다음 미들웨어로 제어를 넘깁니다.
   next();
 };

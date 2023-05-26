@@ -5,15 +5,15 @@ const User = require("../models/user");
 const mongoose = require("mongoose");
 
 const createPost = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return next(
-      new HttpError(`createPost: Invalid inputs passed, please check your data, ${JSON.stringify(errors)}`, 400)
-    );
-  }
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   return next(
+  //     new HttpError(`createPost: Invalid inputs passed, please check your data}`, 400)
+  //   );
+  // }
 
   const { title, description, image, creator } = req.body;
-
+  console.log("image", image);
   let user;
   try {
     user = await User.findById(creator);
