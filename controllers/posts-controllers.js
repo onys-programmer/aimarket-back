@@ -8,7 +8,7 @@ const createPost = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
-      new HttpError("Invalid inputs passed, please check your data.", 422)
+      new HttpError(`createPost: Invalid inputs passed, please check your data, ${JSON.stringify(errors)}`, 400)
     );
   }
 
