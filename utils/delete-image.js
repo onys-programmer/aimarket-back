@@ -1,0 +1,33 @@
+const HttpError = require("../models/http-error");
+const { S3Client, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const S3_BASE_URL = "https://webdokkaebi-kmong.s3.ap-northeast-2.amazonaws.com";
+const s3Client = new S3Client({
+  region: "ap-northeast-2",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
+
+const deleteImage = async (imageUrl) => {
+  try {
+    const imageUrlArray = imageUrl.split("/");
+    const bucketName = imageUrlArray[2].split(".")[0];
+    const key = imageUrlArray.slice(3).join("/");
+    console.log("bucketName", bucketName, "key", key);
+    const deleteParams = {
+      Bucket: bucketName,
+      Key: key,
+    };
+
+    const deleteObjectCommand = new DeleteObjectCommand(deleteParams);
+    await s3Client.send(deleteObjectCommand);
+
+    console.log("Image deleted successfully");
+  } catch (err) {
+    console.error("Error deleting image:", err);
+    throw new HttpError("Failed to delete image");
+  }
+};
+
+module.exports = deleteImage;

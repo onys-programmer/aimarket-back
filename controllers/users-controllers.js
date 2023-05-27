@@ -3,6 +3,9 @@ const HttpError = require("../models/http-error");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Post = require("../models/post");
+const Comment = require("../models/comment");
+
 require("dotenv").config();
 
 const generateToken = async (user) => {
@@ -197,6 +200,8 @@ const deleteUser = async (req, res, next) => {
       return next(error);
     }
 
+    await Post.deleteMany({ creator: userId });
+    await Comment.deleteMany({ creator: userId });
     // Delete the user
     await user.deleteOne();
 

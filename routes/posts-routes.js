@@ -15,6 +15,7 @@ const {
 const checkAuth = require("../middleware/check-auth");
 const checkFileExtension = require("../middleware/check-file-extension");
 const uploadPostImage = require("../middleware/upload-post-image");
+const deletePostImage = require("../middleware/delete-post-image");
 
 const router = express.Router();
 
@@ -33,6 +34,6 @@ router.post(
   createPost
 );
 router.patch("/:pid", updatePost);
-router.delete("/:pid", deletePost);
+router.delete("/:pid", deletePostImage, deletePost);
 
 module.exports = router;
