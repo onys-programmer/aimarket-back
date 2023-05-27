@@ -145,7 +145,7 @@ const deleteComment = async (req, res, next) => {
 
   let comment;
   try {
-    comment = await Comment.findById(commentId).populate("creator");
+    comment = await Comment.findById(commentId).populate("creator").populate("post");
   } catch (err) {
     const error = new HttpError(
       "deleteComment: Could not find comment for the provided id.",
@@ -177,6 +177,9 @@ const deleteComment = async (req, res, next) => {
 
     comment.creator.comments.pull(comment);
     await comment.creator.save({ session: session });
+
+    comment.post.comments.pull(comment);
+    await comment.post.save({ session: session });
 
     await session.commitTransaction();
   } catch (err) {

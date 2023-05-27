@@ -10,7 +10,7 @@ const postSchema = new Schema({
   createdAt: { type: Date, required: true },
   updatedAt: { type: Date },
   creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
-  comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
+  comments: [{ type: mongoose.Types.ObjectId, ref: "Comment", cascadeDelete: true }],
 });
 
 module.exports = mongoose.model("Post", postSchema);
