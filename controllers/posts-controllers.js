@@ -3,6 +3,7 @@ const HttpError = require("../models/http-error");
 const Post = require("../models/post");
 const User = require("../models/user");
 const mongoose = require("mongoose");
+const Comment = require("../models/comment");
 
 const createPost = async (req, res, next) => {
   // const errors = validationResult(req);
@@ -207,7 +208,8 @@ const deletePost = async (req, res, next) => {
   try {
     const session = await mongoose.startSession();
     session.startTransaction();
-    await post.remove({ session: session });
+    await Comment.deleteMany({ post: post._id }).session(session);
+    await post.deleteOne({ session: session });
 
     post.creator.posts.pull(post);
     await post.creator.save({ session: session });
