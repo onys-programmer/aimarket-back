@@ -7,6 +7,7 @@ const {
   createPost,
   getPosts,
   getPostById,
+  getPostByIndex,
   getPostsByUserId,
   updatePost,
   deletePost,
@@ -21,6 +22,7 @@ const router = express.Router();
 
 router.get("/", getPosts);
 router.get("/:pid", getPostById);
+router.get("/index/:idx", getPostByIndex);
 router.get("/user/:uid", getPostsByUserId);
 
 router.use(checkAuth);

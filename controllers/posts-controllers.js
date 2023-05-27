@@ -52,6 +52,32 @@ const createPost = async (req, res, next) => {
   }
 };
 
+const getPostByIndex = async (req, res, next) => {
+  const idx = req.params.idx;
+  let post;
+  try {
+    const posts = await Post.find().sort({ createdAt: -1 }).exec();
+    post = posts[idx];
+  } catch (err) {
+    const error = new HttpError(
+      `Something went wrong, could not find a post.${err}`,
+      500
+    );
+    return next(error);
+  }
+
+  if (!post) {
+    const error = new HttpError(
+      "getPostByIndex: Could not find a post for the provided index.",
+      404
+    );
+    return next(error);
+  }
+
+  res.json({ post: post.toObject({ getters: true }) });
+  next();
+};
+
 const getPostById = async (req, res, next) => {
   const postId = req.params.pid;
   let post;
@@ -217,7 +243,7 @@ const deletePost = async (req, res, next) => {
     await session.commitTransaction();
   } catch (err) {
     const error = new HttpError(
-      `Something went wrong, could not delete post. ${err}`,
+      `Something went wrong, could not delete post.${err} `,
       500
     );
     return next(error);
@@ -228,6 +254,7 @@ const deletePost = async (req, res, next) => {
 
 exports.createPost = createPost;
 exports.getPosts = getPosts;
+exports.getPostByIndex = getPostByIndex;
 exports.getPostById = getPostById;
 exports.getPostsByUserId = getPostsByUserId;
 exports.updatePost = updatePost;

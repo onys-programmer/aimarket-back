@@ -30,6 +30,7 @@ const uploadImage = async (directory, imageName, imageBuffer) => {
     Bucket: "webdokkaebi-kmong",
     Key: `aimarket/${directory}/${imageKey}`,
     Body: fileContent,
+    ACL: "public-read",
   };
 
   try {
