@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
+  title: { type: String, required: true, maxLength: 50 },
+  description: { type: String, required: true, maxLength: 500 },
   image: { type: String, required: true },
   thumbnail: { type: String, required: true },
   createdAt: { type: Date, required: true },

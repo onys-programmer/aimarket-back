@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const commentSchema = new Schema({
-  content: { type: String, required: true },
+  content: { type: String, required: true, maxLength: 200 },
   createdAt: { type: Date, required: true },
   updatedAt: { type: Date },
   post: { type: mongoose.Types.ObjectId, required: true, ref: "Post" },
