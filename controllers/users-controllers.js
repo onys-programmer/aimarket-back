@@ -26,16 +26,31 @@ const generateToken = async (user) => {
   return token;
 };
 
+const getUserById = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  try {
+    const user = await User.findById(userId).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch user' });
+  }
+};
+
 const signUp = async (req, res, next) => {
   const errors = validationResult(req);
+  console.log("errors", errors);
   if (!errors.isEmpty()) {
     return next(
       new HttpError("Invalid inputs passed, please check your data.", 422)
     );
   }
-
+  console.log('signUp is running');
   const { name, email, password } = req.body;
-
+  console.log(name, email, password);
   let existingUser;
   try {
     existingUser = await User.findOne({ email: email });
@@ -50,7 +65,7 @@ const signUp = async (req, res, next) => {
   if (existingUser !== null) {
     const error = new HttpError(
       `That Email is already used, please try again with other email: ${existingUser}`,
-      500
+      302
     );
     return next(error);
   }
@@ -92,7 +107,8 @@ const signUp = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   const { email, password } = req.body;
-
+  console.log('login is running');
+  console.log(email, password);
   let existingUser;
   try {
     existingUser = await User.findOne({ email: email });
@@ -107,7 +123,7 @@ const login = async (req, res, next) => {
   if (existingUser === null) {
     const error = new HttpError(
       "there is no user that email, could not log you in.",
-      401
+      404
     );
     return next(error);
   }
@@ -216,6 +232,7 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
+exports.getUserById = getUserById;
 exports.signUp = signUp;
 exports.login = login;
 exports.changePassword = changePassword;

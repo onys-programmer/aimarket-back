@@ -2,6 +2,7 @@ const express = require("express");
 const { check } = require("express-validator");
 
 const {
+  getUserById,
   signUp,
   login,
   changePassword,
@@ -11,6 +12,8 @@ const {
 const checkAuth = require("../middleware/check-auth");
 
 const router = express.Router();
+
+router.get("/:uid", getUserById);
 
 router.post(
   "/signup",

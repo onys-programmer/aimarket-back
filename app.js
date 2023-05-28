@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
@@ -9,6 +10,13 @@ const HttpError = require("./models/http-error");
 require("dotenv").config();
 
 const app = express();
+
+// 허용할 도메인과 포트를 명시적으로 등록
+const allowedOrigins = ['http://localhost:3000'];
+app.use(cors({
+  origin: allowedOrigins
+}));
+
 
 app.use(bodyParser.json());
 
