@@ -150,6 +150,7 @@ const login = async (req, res, next) => {
   const token = await generateToken(existingUser);
   res.json({
     userId: existingUser.id,
+    name: existingUser.name,
     email: existingUser.email,
     token: token,
   });
