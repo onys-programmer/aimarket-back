@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Post = require("../models/post");
 const Comment = require("../models/comment");
+const generateTempPassword = require("../utils/generate-temp-password");
 
 require("dotenv").config();
 
@@ -264,8 +265,19 @@ const findPassword = async (req, res, next) => {
       return res.status(400).json({ message: 'Invalid memorable date' });
     }
 
+    // 새 비밀번호 생성
+    const newPassword = generateTempPassword();
+
+    // 비밀번호 변경
+    try {
+      existingUser.password = await bcrypt.hash(newPassword, 12);
+      await existingUser.save();
+    } catch (err) {
+      return res.status(500).json({ message: 'Failed to hash password' });
+    }
+
     // 비밀번호 반환
-    res.status(200).json({ password: existingUser.password });
+    res.status(200).json({ password: newPassword });
   } catch (error) {
     res.status(500).json({ message: 'Failed to find password' });
   }
