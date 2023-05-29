@@ -49,8 +49,22 @@ const signUp = async (req, res, next) => {
     );
   }
   console.log('signUp is running');
-  const { name, email, password } = req.body;
-  console.log(name, email, password);
+  const { name, email, password, memorableDate } = req.body;
+  console.log(name, email, password, memorableDate);
+
+  if (
+    !email.includes('@') ||
+    password.length < 6 ||
+    memorableDate.length !== 8 ||
+    !memorableDate.match(/^[0-9]+$/)
+  ) {
+    const error = new HttpError(
+      "Invalid inputs passed, please check your data.",
+      422
+    );
+    return next(error);
+  }
+
   let existingUser;
   try {
     existingUser = await User.findOne({ email: email });
@@ -87,6 +101,7 @@ const signUp = async (req, res, next) => {
     image:
       "https://i.pinimg.com/280x280_RS/6b/71/20/6b7120f396928249c8e50953e64d81f5.jpg",
     password: hashedPassword,
+    memorableDate,
   });
 
   try {
@@ -152,6 +167,7 @@ const login = async (req, res, next) => {
     userId: existingUser.id,
     name: existingUser.name,
     email: existingUser.email,
+    image: existingUser.image,
     token: token,
   });
 };
@@ -233,8 +249,32 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
+const findPassword = async (req, res, next) => {
+  const { email, memorableDate } = req.body;
+
+  try {
+    // 이메일로 사용자 찾기
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // 기억에 남는 날짜 비교
+    if (existingUser.memorableDate !== memorableDate) {
+      return res.status(400).json({ message: 'Invalid memorable date' });
+    }
+
+    // 비밀번호 반환
+    res.status(200).json({ password: existingUser.password });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to find password' });
+  }
+};
+
+
 exports.getUserById = getUserById;
 exports.signUp = signUp;
 exports.login = login;
 exports.changePassword = changePassword;
 exports.deleteUser = deleteUser;
+exports.findPassword = findPassword;

@@ -5,6 +5,7 @@ const {
   getUserById,
   signUp,
   login,
+  findPassword,
   changePassword,
   deleteUser,
 } = require("../controllers/users-controllers");
@@ -31,6 +32,10 @@ router.post(
   ],
   login
 );
+router.post(
+  "/find-password",
+  findPassword,
+)
 
 router.use(checkAuth);
 

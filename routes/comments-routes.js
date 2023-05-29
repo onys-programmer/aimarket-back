@@ -12,9 +12,9 @@ const checkAuth = require("../middleware/check-auth");
 
 const router = express.Router();
 
-router.use(checkAuth);
-
 router.get("/user/:uid", getCommentsByUserId);
+
+router.use(checkAuth);
 
 router.post("/", [check("content").not().isEmpty()], createComment);
 router.patch("/:cid", updateComment);
