@@ -186,6 +186,7 @@ const changePassword = async (req, res, next) => {
 
   if (!user) {
     const error = new HttpError("User not found.", 404);
+    console.log(error);
     return next(error);
   }
 
@@ -283,6 +284,48 @@ const findPassword = async (req, res, next) => {
   }
 };
 
+const checkPassword = async (req, res, next) => {
+  const { userId, password } = req.body;
+
+  try {
+    existingUser = await User.findOne({ _id: userId });
+  } catch (err) {
+    const error = new HttpError(
+      "checking password failed, please check your credentials and try again",
+      500
+    );
+    return next(error);
+  }
+
+  if (existingUser === null) {
+    const error = new HttpError(
+      "there is no user that email, could not log you in.",
+      404
+    );
+    return next(error);
+  }
+
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(password, existingUser.password);
+  } catch (err) {
+    const error = new HttpError(
+      "Could not check password, please check your credentials and try again.",
+      500
+    );
+    return next(error);
+  }
+
+  if (!isValidPassword) {
+    const error = new HttpError(
+      "Invalid credentials, password check failed.",
+      401
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ message: "Password check success." });
+};
 
 exports.getUserById = getUserById;
 exports.signUp = signUp;
@@ -290,3 +333,4 @@ exports.login = login;
 exports.changePassword = changePassword;
 exports.deleteUser = deleteUser;
 exports.findPassword = findPassword;
+exports.checkPassword = checkPassword;

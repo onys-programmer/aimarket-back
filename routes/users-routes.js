@@ -8,6 +8,7 @@ const {
   findPassword,
   changePassword,
   deleteUser,
+  checkPassword,
 } = require("../controllers/users-controllers");
 
 const checkAuth = require("../middleware/check-auth");
@@ -39,6 +40,11 @@ router.post(
 
 router.use(checkAuth);
 
+router.post(
+  "/check-password",
+  [check("password").not().isEmpty()],
+  checkPassword,
+);
 router.patch("/", changePassword);
 router.delete("/", deleteUser);
 
