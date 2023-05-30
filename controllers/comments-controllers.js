@@ -80,10 +80,28 @@ const createComment = async (req, res, next) => {
 
 const getCommentsByUserId = async (req, res, next) => {
   const userId = req.params.uid;
+  const { page, perPage } = req.query;
+
+  // 페이지와 페이지당 게시물 수를 정수로 변환합니다.
+  const currentPage = parseInt(page) || 1;
+  const commentsPerPage = parseInt(perPage) || 10;
+
+  let totalComments;
+  try {
+    totalComments = await Comment.countDocuments();
+  } catch (err) {
+    const error = new HttpError(
+      "Fetching comments failed, please try again later.",
+      500
+    );
+    return next(error);
+  }
 
   let comments;
   try {
-    comments = await Comment.find({ creator: userId });
+    comments = await Comment.find({ creator: userId })
+      .skip((currentPage - 1) * commentsPerPage)
+      .limit(commentsPerPage);
   } catch (err) {
     const error = new HttpError(
       `getCommentsByUserId: Fetching comments failed, please try again later.: ${err}`,
@@ -98,8 +116,11 @@ const getCommentsByUserId = async (req, res, next) => {
     );
   }
 
+  const isLastPage = currentPage * commentsPerPage >= totalComments ? true : false;
+
   res.json({
     comments: comments.map((comment) => comment.toObject({ getters: true })),
+    isLastPage,
   });
 };
 

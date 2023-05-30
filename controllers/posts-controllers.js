@@ -178,7 +178,7 @@ const updatePost = async (req, res, next) => {
     );
   }
 
-  const { title, image, description } = req.body;
+  const { title, description } = req.body;
   const postId = req.params.pid;
 
   let post;
@@ -198,17 +198,18 @@ const updatePost = async (req, res, next) => {
   }
 
   post.title = title;
-  post.image = image;
   post.description = description;
   post.updatedAt = new Date();
 
   try {
     await post.save();
+    console.log("post updated");
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not saved updating post.",
       500
     );
+    console.log(err);
     return next(error);
   }
 
