@@ -73,12 +73,6 @@ app.use((req, res, next) => {
 app.use('/api', createProxyMiddleware({
   target: 'https://aimarket.herokuapp.com',
   changeOrigin: true,
-  cors: {
-    origin: 'https://aimarket365.netlify.app',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  },
 }));
 
 app.use("/api/posts", postsRoutes);
