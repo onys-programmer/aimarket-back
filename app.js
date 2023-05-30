@@ -12,7 +12,6 @@ require("dotenv").config();
 const AdminBro = require('admin-bro');
 const AdminBroExpress = require('@admin-bro/express');
 const AdminBroMongoose = require('@admin-bro/mongoose');
-const { createProxyMiddleware } = require('http-proxy-middleware');
 
 // AdminBro 설정
 AdminBro.registerAdapter(AdminBroMongoose);
@@ -68,12 +67,6 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
   next();
 });
-
-// /api/* 경로에 대한 프록시 설정
-app.use('/api', createProxyMiddleware({
-  target: 'https://aimarket.herokuapp.com',
-  changeOrigin: true,
-}));
 
 app.use("/api/posts", postsRoutes);
 app.use("/api/comments", commentsRoutes);
