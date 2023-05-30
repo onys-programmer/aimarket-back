@@ -165,6 +165,7 @@ const updateComment = async (req, res, next) => {
       `Something went wrong, could not saved updating comment.`,
       500
     );
+    console.log(err);
     return next(error);
   }
 

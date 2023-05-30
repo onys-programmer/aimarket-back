@@ -9,7 +9,49 @@ const usersRoutes = require("./routes/users-routes");
 const HttpError = require("./models/http-error");
 require("dotenv").config();
 
+const AdminBro = require('admin-bro');
+const AdminBroExpress = require('@admin-bro/express');
+const AdminBroMongoose = require('@admin-bro/mongoose');
+
+const User = require('./models/user');
+const Post = require('./models/post');
+const Comment = require('./models/comment');
+
+// AdminBro 설정
+AdminBro.registerAdapter(AdminBroMongoose);
+const adminBro = new AdminBro({
+  databases: [mongoose],
+  rootPath: '/admin',
+});
+
+// 관리자 계정 정보
+const ADMIN = {
+  email: 'admin@aimarket.com',
+  password: process.env.ADMIN_PASSWORD,
+};
+
+// Express 애플리케이션 생성
 const app = express();
+
+// AdminBro 미들웨어 설정
+const router = AdminBroExpress.buildAuthenticatedRouter(
+  adminBro,
+  {
+    authenticate: async (email, password) => {
+      if (email === ADMIN.email && password === ADMIN.password) {
+        return ADMIN;
+      }
+      return null;
+    },
+    cookiePassword: process.env.COOKIE_PASSWORD,
+  },
+  null,
+  {
+    resave: false,
+    saveUninitialized: true,
+  }
+);
+app.use(adminBro.options.rootPath, router);
 
 // 허용할 도메인과 포트를 명시적으로 등록
 const allowedOrigins = ['http://localhost:3000'];
@@ -48,11 +90,15 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    `mongodb+srv://webdokkaebi:${process.env.MONGODB_PASSWORD}@aimarket.mo8fwdt.mongodb.net/posts?retryWrites=true&w=majority`
-  )
+    `mongodb+srv://webdokkaebi:${process.env.MONGODB_PASSWORD}@aimarket.mo8fwdt.mongodb.net/posts?retryWrites=true&w=majority`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
-    app.listen(5000);
+    app.listen(5000, () => {
+      console.log("Server is running on port 5000");
+    });
   })
   .catch((err) => {
-    console.log(err);
+    console.log('MongoDB connection error:', err);
   });
