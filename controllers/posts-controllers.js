@@ -136,10 +136,13 @@ const getPosts = async (req, res, next) => {
     return next(new HttpError("Could not find posts.", 404));
   }
 
+  const isLastPage = currentPage * postsPerPage >= totalPosts ? true : false;
+
   res.json({
     posts: posts.map((post) => post.toObject({ getters: true })),
     currentPage,
     totalPages: Math.ceil(totalPosts / postsPerPage),
+    isLastPage,
   });
 };
 
