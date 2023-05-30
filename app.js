@@ -13,10 +13,6 @@ const AdminBro = require('admin-bro');
 const AdminBroExpress = require('@admin-bro/express');
 const AdminBroMongoose = require('@admin-bro/mongoose');
 
-const User = require('./models/user');
-const Post = require('./models/post');
-const Comment = require('./models/comment');
-
 // AdminBro 설정
 AdminBro.registerAdapter(AdminBroMongoose);
 const adminBro = new AdminBro({
