@@ -9,37 +9,45 @@ const createComment = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
-      new HttpError(`createComment: Invalid inputs passed, please check your data}`, 400)
+      new HttpError(
+        `createComment: Invalid inputs passed, please check your data}`,
+        400
+      )
     );
   }
 
   const { content, creator, postId } = req.body;
 
-  let user;
   try {
-    user = await User.findById(creator);
-  } catch (err) {
-    const error = new HttpError(
-      `createComment: Could not find user for provided id.: ${err}`,
-      404
-    );
-    return next(error);
-  }
+    let user;
+    let post;
 
-  let post;
-  try {
-    post = await Post.findById(postId);
-  } catch (err) {
-    const error = new HttpError(
-      `createComment: Could not find post for provided id.: ${err}`,
-      404
-    );
-    return next(error);
-  }
-
-  try {
     const session = await mongoose.startSession();
     session.startTransaction();
+
+    try {
+      user = await User.findById(creator).session(session);
+    } catch (err) {
+      await session.abortTransaction();
+      session.endSession();
+      const error = new HttpError(
+        `createComment: Could not find user for provided id.: ${err}`,
+        404
+      );
+      return next(error);
+    }
+
+    try {
+      post = await Post.findById(postId).session(session);
+    } catch (err) {
+      await session.abortTransaction();
+      session.endSession();
+      const error = new HttpError(
+        `createComment: Could not find post for provided id.: ${err}`,
+        404
+      );
+      return next(error);
+    }
 
     const createdComment = new Comment({
       content,
@@ -48,18 +56,20 @@ const createComment = async (req, res, next) => {
       createdAt: new Date(),
     });
 
-    await createdComment.save({ session: session });
+    await createdComment.save({ session });
 
     user.comments.push(createdComment);
-    await user.save({ session: session });
+    await user.save({ session });
 
     post.comments.push(createdComment);
-    await post.save({ session: session });
+    await post.save({ session });
 
     await session.commitTransaction();
+    session.endSession();
 
     res.json({ comment: createdComment });
   } catch (err) {
+    console.log(err);
     const error = new HttpError(
       `createComment: Creating comment failed, please try again. : ${err}`,
       500
@@ -145,7 +155,9 @@ const deleteComment = async (req, res, next) => {
 
   let comment;
   try {
-    comment = await Comment.findById(commentId).populate("creator").populate("post");
+    comment = await Comment.findById(commentId)
+      .populate("creator")
+      .populate("post");
   } catch (err) {
     const error = new HttpError(
       "deleteComment: Could not find comment for the provided id.",
