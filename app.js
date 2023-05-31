@@ -29,10 +29,18 @@ const ADMIN = {
 // Express 애플리케이션 생성
 const app = express();
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  next();
-});
+// 허용할 도메인과 포트를 명시적으로 등록
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://localhost:3000",
+  "https://aimarket365.netlify.app",
+  "http://aimarket365.netlify.app",
+];
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 // AdminBro 미들웨어 설정
 const router = AdminBroExpress.buildAuthenticatedRouter(
@@ -54,30 +62,7 @@ const router = AdminBroExpress.buildAuthenticatedRouter(
 );
 app.use(adminBro.options.rootPath, router);
 
-// // 허용할 도메인과 포트를 명시적으로 등록
-// const allowedOrigins = [
-//   "http://localhost:3000",
-//   "https://localhost:3000",
-//   "https://aimarket365.netlify.app",
-//   "http://aimarket365.netlify.app",
-// ];
-// app.use(
-//   cors({
-//     origin: "*",
-//   })
-// );
-
 app.use(bodyParser.json());
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
-  next();
-});
 
 app.use("/api/posts", postsRoutes);
 app.use("/api/comments", commentsRoutes);
