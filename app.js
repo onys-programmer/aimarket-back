@@ -52,11 +52,13 @@ app.use(adminBro.options.rootPath, router);
 // 허용할 도메인과 포트를 명시적으로 등록
 const allowedOrigins = [
   "http://localhost:3000",
+  "https://localhost:3000",
   "https://aimarket365.netlify.app",
+  "http://aimarket365.netlify.app",
 ];
 app.use(
   cors({
-    origin: "*",
+    origin: allowedOrigins,
   })
 );
 
