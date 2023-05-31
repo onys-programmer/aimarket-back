@@ -9,20 +9,20 @@ const usersRoutes = require("./routes/users-routes");
 const HttpError = require("./models/http-error");
 require("dotenv").config();
 
-const AdminBro = require('admin-bro');
-const AdminBroExpress = require('@admin-bro/express');
-const AdminBroMongoose = require('@admin-bro/mongoose');
+const AdminBro = require("admin-bro");
+const AdminBroExpress = require("@admin-bro/express");
+const AdminBroMongoose = require("@admin-bro/mongoose");
 
 // AdminBro 설정
 AdminBro.registerAdapter(AdminBroMongoose);
 const adminBro = new AdminBro({
   databases: [mongoose],
-  rootPath: '/admin',
+  rootPath: "/admin",
 });
 
 // 관리자 계정 정보
 const ADMIN = {
-  email: 'admin@aimarket.com',
+  email: "admin@aimarket.com",
   password: process.env.ADMIN_PASSWORD,
 };
 
@@ -50,11 +50,15 @@ const router = AdminBroExpress.buildAuthenticatedRouter(
 app.use(adminBro.options.rootPath, router);
 
 // 허용할 도메인과 포트를 명시적으로 등록
-const allowedOrigins = ['http://localhost:3000', 'https://aimarket365.netlify.app/'];
-app.use(cors({
-  origin: allowedOrigins
-}));
-
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://aimarket365.netlify.app",
+];
+app.use(
+  cors({
+    origin: allowedOrigins,
+  })
+);
 
 app.use(bodyParser.json());
 
@@ -81,15 +85,19 @@ app.use((error, req, res, next) => {
   if (res.headerSent) {
     return next(error);
   }
-  res.status(error.code || 500).json({ message: error.message || "An unknown error occurred!" });
+  res
+    .status(error.code || 500)
+    .json({ message: error.message || "An unknown error occurred!" });
 });
 
 mongoose
   .connect(
-    `mongodb+srv://webdokkaebi:${process.env.MONGODB_PASSWORD}@aimarket.mo8fwdt.mongodb.net/posts?retryWrites=true&w=majority`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+    `mongodb+srv://webdokkaebi:${process.env.MONGODB_PASSWORD}@aimarket.mo8fwdt.mongodb.net/posts?retryWrites=true&w=majority`,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => {
     const port = process.env.PORT || 5000;
     app.listen(port, () => {
@@ -97,5 +105,5 @@ mongoose
     });
   })
   .catch((err) => {
-    console.log('MongoDB connection error:', err);
+    console.log("MongoDB connection error:", err);
   });
