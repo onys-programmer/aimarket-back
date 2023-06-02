@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
   title: { type: String, required: true, maxLength: 50 },
-  description: { type: String, required: true, maxLength: 500 },
+  description: { type: String, required: true, maxLength: 500, trim: true },
   image: { type: String, required: true },
   thumbnail: { type: String, required: true },
   createdAt: { type: Date, required: true },
