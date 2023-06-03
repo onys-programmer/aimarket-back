@@ -12,6 +12,7 @@ const {
 } = require("../controllers/users-controllers");
 
 const checkAuth = require("../middleware/check-auth");
+const checkProfileImageExists = require("../middleware/check-profile-image-exists");
 
 const router = express.Router();
 
@@ -19,10 +20,7 @@ router.get("/:uid", getUserById);
 
 router.post(
   "/signup",
-  [
-    check("email").normalizeEmail().isEmail(),
-    check("password").isLength({ min: 6 }),
-  ],
+  checkProfileImageExists,
   signUp
 );
 router.post(

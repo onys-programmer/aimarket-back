@@ -1,9 +1,9 @@
 const HttpError = require("../models/http-error");
 const sharp = require("sharp");
 
-const compressImage = async (image) => {
+const compressImage = async (image, maxKB = 500) => {
   console.log("compressImage is running");
-  const MAX_FILE_SIZE = 500 * 1024; // 500KB
+  const MAX_FILE_SIZE = maxKB * 1024; // 500KB
 
   if (!image) {
     const error = new HttpError("compressImage: No image provided.", 400);

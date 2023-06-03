@@ -42,19 +42,12 @@ const getUserById = async (req, res, next) => {
 };
 
 const signUp = async (req, res, next) => {
-  const errors = validationResult(req);
-  console.log("errors", errors);
-  if (!errors.isEmpty()) {
-    return next(
-      new HttpError("Invalid inputs passed, please check your data.", 422)
-    );
-  }
   console.log('signUp is running');
-  const { name, email, password, memorableDate } = req.body;
-  console.log(name, email, password, memorableDate);
+  const { name, email, password, memorableDate, image } = req.body;
 
   if (
-    !email.includes('@') ||
+    !image ||
+    !email?.includes('@') ||
     password.length < 6 ||
     memorableDate.length !== 8 ||
     !memorableDate.match(/^[0-9]+$/)
@@ -99,8 +92,7 @@ const signUp = async (req, res, next) => {
   const createdUser = new User({
     name,
     email,
-    image:
-      "https://i.pinimg.com/280x280_RS/6b/71/20/6b7120f396928249c8e50953e64d81f5.jpg",
+    image,
     password: hashedPassword,
     memorableDate,
   });
@@ -117,6 +109,7 @@ const signUp = async (req, res, next) => {
   res.status(201).json({
     userId: createdUser.id,
     email: createdUser.email,
+    image: createdUser.image,
     token: token,
   });
 };
