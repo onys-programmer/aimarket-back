@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const Post = require("../models/post");
 const Comment = require("../models/comment");
 const generateTempPassword = require("../utils/generate-temp-password");
+const deleteImage = require("../utils/delete-image");
 
 require("dotenv").config();
 
@@ -219,22 +220,47 @@ const changePassword = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   const { userId } = req.body;
 
+  // Find the user by ID
+  let user;
   try {
-    // Find the user by ID
-    const user = await User.findById(userId);
+    user = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError("User not found.", 404);
+    return next(error);
+  }
 
-    if (!user) {
-      const error = new HttpError("User not found.", 404);
-      return next(error);
-    }
+  try {
+    await deleteImage(user.image);
+  } catch (err) {
+    const error = new HttpError(
+      `Deleting image failed. Error: ${err.message}`,
+      500
+    );
+    return next(error);
+  }
 
+  try {
     await Post.deleteMany({ creator: userId });
-    await Comment.deleteMany({ creator: userId });
-    // Delete the user
-    await user.deleteOne();
+  } catch (err) {
+    const error = new HttpError(
+      `Deleting posts failed. Error: ${err.message}`,
+      500
+    );
+    return next(error);
+  }
 
-    res.status(200).json({ message: `User deleted.: ${userId}` });
-    next();
+  try {
+    await Comment.deleteMany({ creator: userId });
+  } catch (err) {
+    const error = new HttpError(
+      `Deleting comments failed. Error: ${err.message}`,
+      500
+    );
+    return next(error);
+  }
+
+  try {
+    await user.deleteOne();
   } catch (err) {
     const error = new HttpError(
       `Deleting user failed. Error: ${err.message}`,
@@ -242,6 +268,8 @@ const deleteUser = async (req, res, next) => {
     );
     return next(error);
   }
+  res.status(200).json({ message: `User deleted.: ${userId}` });
+  next();
 };
 
 const findPassword = async (req, res, next) => {
