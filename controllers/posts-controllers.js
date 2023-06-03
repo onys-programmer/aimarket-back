@@ -245,6 +245,9 @@ const deletePost = async (req, res, next) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     await Comment.deleteMany({ post: post._id }).session(session);
+
+    deleteImage(post.image);
+    deleteImage(post.thumbnail);
     await post.deleteOne({ session: session });
 
     post.creator.posts.pull(post);

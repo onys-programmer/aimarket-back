@@ -239,6 +239,37 @@ const deleteUser = async (req, res, next) => {
     return next(error);
   }
 
+  let posts;
+  try {
+    posts = await Post.find({ creator: userId });
+  } catch (err) {
+    const error = new HttpError(
+      `Fetching post images failed. Error: ${err.message}`,
+      500
+    );
+    return next(error);
+  }
+  posts.forEach((post) => {
+    try {
+      deleteImage(post.image);
+    } catch (err) {
+      const error = new HttpError(
+        `Deleting post images failed. Error: ${err.message}`,
+        500
+      );
+      return next(error);
+    }
+    try {
+      deleteImage(post.thumbnail);
+    } catch (err) {
+      const error = new HttpError(
+        `Deleting post thumbnails failed. Error: ${err.message}`,
+        500
+      );
+      return next(error);
+    }
+  });
+
   try {
     await Post.deleteMany({ creator: userId });
   } catch (err) {
