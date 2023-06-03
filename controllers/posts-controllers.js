@@ -4,6 +4,7 @@ const Post = require("../models/post");
 const User = require("../models/user");
 const mongoose = require("mongoose");
 const Comment = require("../models/comment");
+const deleteImage = require("../utils/delete-image");
 
 const createPost = async (req, res, next) => {
   // const errors = validationResult(req);
@@ -196,6 +197,9 @@ const updatePost = async (req, res, next) => {
     const error = new HttpError("You are not allowed to edit this post.", 401);
     return next(error);
   }
+
+  deleteImage(post.image);
+  deleteImage(post.thumbnail);
 
   post.title = title;
   post.description = description;
