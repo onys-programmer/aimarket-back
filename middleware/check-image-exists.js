@@ -1,5 +1,5 @@
 const multer = require('multer');
-const upload = multer({ storage: storage }).single('image');
+const upload = multer().single('image');
 
 const checkFileExtension = require("./check-file-extension");
 const uploadPostImage = require("./upload-post-image");
