@@ -170,13 +170,13 @@ const getPostsByUserId = async (req, res, next) => {
 };
 
 const updatePost = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    console.log(errors);
-    return next(
-      new HttpError("Invalid inputs passed, please check your data.", 422)
-    );
-  }
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   console.log(errors);
+  //   return next(
+  //     new HttpError("Invalid inputs passed, please check your data.", 422)
+  //   );
+  // }
 
   const { originalImage, compressedImage, title, description } = req.body;
   const postId = req.params.pid;
