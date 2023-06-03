@@ -15,6 +15,7 @@ const {
 
 const checkAuth = require("../middleware/check-auth");
 const checkFileExtension = require("../middleware/check-file-extension");
+const checkImageExists = require("../middleware/check-image-exists");
 const uploadPostImage = require("../middleware/upload-post-image");
 const deletePostImage = require("../middleware/delete-post-image");
 
@@ -35,7 +36,12 @@ router.post(
   uploadPostImage,
   createPost
 );
-router.patch("/:pid", updatePost);
+router.patch(
+  "/:pid",
+  [check("title").not().isEmpty()],
+  checkImageExists,
+  updatePost
+);
 router.delete("/:pid", deletePostImage, deletePost);
 
 module.exports = router;

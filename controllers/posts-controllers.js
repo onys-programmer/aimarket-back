@@ -178,7 +178,7 @@ const updatePost = async (req, res, next) => {
     );
   }
 
-  const { title, description } = req.body;
+  const { originalImage, compressedImage, title, description } = req.body;
   const postId = req.params.pid;
 
   let post;
@@ -199,6 +199,8 @@ const updatePost = async (req, res, next) => {
 
   post.title = title;
   post.description = description;
+  post.image = originalImage;
+  post.thumbnail = compressedImage;
   post.updatedAt = new Date();
 
   try {
