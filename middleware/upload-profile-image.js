@@ -23,7 +23,7 @@ const uploadProfileImage = async (req, res, next) => {
   try {
     const uploadedCompressedImageUrl = await uploadImage(
       "user/profile-images",
-      `progile-image-${image.originalname}`,
+      `profile-image-${image.originalname}`,
       compressedImageBuffer
     );
     req.body.image = uploadedCompressedImageUrl;

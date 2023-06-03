@@ -9,6 +9,7 @@ const {
   changePassword,
   deleteUser,
   checkPassword,
+  changeProfileImage,
 } = require("../controllers/users-controllers");
 
 const checkAuth = require("../middleware/check-auth");
@@ -45,5 +46,10 @@ router.post(
 );
 router.patch("/", changePassword);
 router.delete("/", deleteUser);
+router.patch(
+  "/change-profile-image",
+  checkProfileImageExists,
+  changeProfileImage
+);
 
 module.exports = router;

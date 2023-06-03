@@ -348,6 +348,23 @@ const checkPassword = async (req, res, next) => {
   res.status(200).json({ message: "Password check success." });
 };
 
+const changeProfileImage = async (req, res, next) => {
+  const { image, userId } = req.body;
+  let user;
+  try {
+    user = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError("Failed to fetch user.", 500);
+    return next(error);
+  }
+
+  deleteImage(user.image);
+  user.image = image;
+  user.save();
+
+  res.status(200).json({ message: "Profile image changed successfully." });
+}
+
 exports.getUserById = getUserById;
 exports.signUp = signUp;
 exports.login = login;
@@ -355,3 +372,4 @@ exports.changePassword = changePassword;
 exports.deleteUser = deleteUser;
 exports.findPassword = findPassword;
 exports.checkPassword = checkPassword;
+exports.changeProfileImage = changeProfileImage;
