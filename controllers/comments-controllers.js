@@ -50,6 +50,7 @@ const createComment = async (req, res, next) => {
     }
 
     const createdComment = new Comment({
+      creatorName: user.name,
       content,
       creator,
       post: post.id,

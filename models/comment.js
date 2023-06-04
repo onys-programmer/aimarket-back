@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const commentSchema = new Schema({
+  creatorName: { type: String, required: true },
   content: { type: String, required: true, maxLength: 200, trim: true },
   createdAt: { type: Date, required: true },
   updatedAt: { type: Date },

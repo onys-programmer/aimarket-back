@@ -83,7 +83,13 @@ const getPostById = async (req, res, next) => {
   const postId = req.params.pid;
   let post;
   try {
-    post = await Post.findById(postId).populate("comments").populate("creator");
+    post = await Post.findById(postId).populate({
+      path: "comments",
+      populate: {
+        path: "creator",
+        select: "-password" // 원하는 필드
+      }
+    }).populate("creator");
   } catch (err) {
     const error = new HttpError(
       "Something went wrong, could not find a post.",
