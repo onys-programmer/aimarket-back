@@ -118,7 +118,7 @@ const signUp = async (req, res, next) => {
 const login = async (req, res, next) => {
   const { email, password } = req.body;
   console.log('login is running');
-  console.log(email, password);
+  // console.log(email, password);
   let existingUser;
   try {
     existingUser = await User.findOne({ email: email });

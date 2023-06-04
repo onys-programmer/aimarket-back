@@ -14,16 +14,17 @@ const deleteImage = async (imageUrl) => {
     const imageUrlArray = imageUrl.split("/");
     const bucketName = imageUrlArray[2].split(".")[0];
     const key = imageUrlArray.slice(3).join("/");
-    console.log("bucketName", bucketName, "key", key);
+    // console.log("bucketName", bucketName, "key", key);
     const deleteParams = {
       Bucket: bucketName,
       Key: key,
     };
 
+    // console.log("deleteParams", deleteParams)
     const deleteObjectCommand = new DeleteObjectCommand(deleteParams);
     await s3Client.send(deleteObjectCommand);
 
-    console.log("Image deleted successfully");
+    // console.log("Image deleted successfully");
   } catch (err) {
     console.error("Error deleting image:", err);
     throw new HttpError("Failed to delete image");

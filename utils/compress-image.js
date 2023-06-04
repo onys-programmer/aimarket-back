@@ -2,7 +2,7 @@ const HttpError = require("../models/http-error");
 const sharp = require("sharp");
 
 const compressImage = async (image, maxKB = 500) => {
-  console.log("compressImage is running");
+  // console.log("compressImage is running");
   const MAX_FILE_SIZE = maxKB * 1024; // 500KB
 
   if (!image) {

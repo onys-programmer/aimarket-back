@@ -23,7 +23,7 @@ const deletePostImage = async (req, res, next) => {
       return next(error);
     }
 
-    console.log("Image deleted successfully");
+    // console.log("Image deleted successfully");
     next();
   } catch (err) {
     console.error("Error deleting image:", err);

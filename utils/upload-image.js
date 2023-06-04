@@ -12,14 +12,14 @@ const s3Client = new S3Client({
 });
 
 const uploadImage = async (directory, imageName, imageBuffer) => {
-  console.log("uploadImage is running", directory);
+  // console.log("uploadImage is running", directory);
   // console.log("req", req);
   if (!directory) {
     const error = new HttpError("uploadImage: No directory provided.", 400);
     throw error;
   }
   if (!imageName || !imageBuffer) {
-    console.log("imageName", imageName, "imageBuffer", imageBuffer);
+    // console.log("imageName", imageName, "imageBuffer", imageBuffer);
     const error = new HttpError("uploadImage: No image provided.", 400);
     throw error;
   }
