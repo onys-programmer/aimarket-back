@@ -32,15 +32,21 @@ const getUserById = async (req, res, next) => {
   const userId = req.params.uid;
 
   try {
-    const user = await User.findById(userId).select('-password');
+    const user = await User.findById(userId)
+      .select('-password')
+      .populate('posts') // 글 목록 가져오기
+      .populate('comments'); // 댓글 목록 가져오기
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
     res.status(200).json({ user });
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch user' });
   }
 };
+
 
 const signUp = async (req, res, next) => {
   console.log('signUp is running');
