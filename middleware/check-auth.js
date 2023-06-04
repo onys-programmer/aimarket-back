@@ -4,9 +4,9 @@ require("dotenv").config();
 const HttpError = require("../models/http-error");
 
 module.exports = (req, res, next) => {
-  console.log("check auth is running");
+  console.log("check auth is running");)
   try {
-    // console.log(req.headers);
+    console.log(req.headers);
     const token = req.headers.authorization.split(" ")[1];
     // console.log('token', token);
 
