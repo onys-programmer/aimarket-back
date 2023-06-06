@@ -19,6 +19,7 @@ module.exports = (req, res, next) => {
     // console.log('decodedToken', decodedToken);
     req.userData = { userId: decodedToken.userId };
     // console.log('check auth', req.userData);
+    console.log("check auth successed");
     next();
   } catch (err) {
     console.log("Authentication failed!: ", err);

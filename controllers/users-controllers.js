@@ -7,6 +7,7 @@ const Post = require("../models/post");
 const Comment = require("../models/comment");
 const generateTempPassword = require("../utils/generate-temp-password");
 const deleteImage = require("../utils/delete-image");
+const DEFAULT_PROFILE_IMAGE_URL = require("../static/constants");
 
 require("dotenv").config();
 
@@ -57,7 +58,7 @@ const getUserById = async (req, res, next) => {
 const signUp = async (req, res, next) => {
   console.log('signUp is running');
   const { name, email, password, memorableDate, image } = req.body;
-
+  // console.log(req.body)
   if (
     !image ||
     !email?.includes('@') ||
@@ -397,6 +398,7 @@ const changeProfileImage = async (req, res, next) => {
   try {
     user = await User.findById(userId);
   } catch (err) {
+    console.log(err);
     const error = new HttpError("Failed to fetch user.", 500);
     return next(error);
   }

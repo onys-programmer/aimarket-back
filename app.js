@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -7,7 +8,6 @@ const postsRoutes = require("./routes/posts-routes");
 const commentsRoutes = require("./routes/comments-routes");
 const usersRoutes = require("./routes/users-routes");
 const HttpError = require("./models/http-error");
-require("dotenv").config();
 
 const AdminBro = require("admin-bro");
 const AdminBroExpress = require("@admin-bro/express");
