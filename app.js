@@ -12,12 +12,53 @@ const HttpError = require("./models/http-error");
 const AdminBro = require("admin-bro");
 const AdminBroExpress = require("@admin-bro/express");
 const AdminBroMongoose = require("@admin-bro/mongoose");
+const Post = require("./models/post");
+const Comment = require("./models/comment");
 
 // AdminBro 설정
 AdminBro.registerAdapter(AdminBroMongoose);
+const MyTextField = (props) => {
+  const { record, property, h, context } = props;
+  const value = record.params[context.field.name()];
+  const lines = value.split("\n");
+  const html = lines.join("<br>");
+  return h().tag("div", {}, html);
+};
+
+const commentResource = {
+  resource: Comment,
+  options: {
+    properties: {
+      content: {
+        type: "textarea",
+        components: {
+          edit: MyTextField, // 필드 커스터마이즈 등록
+          show: MyTextField, // 필드 커스터마이즈 등록
+        },
+      },
+    },
+  },
+};
+
+const postResource = {
+  resource: Post,
+  options: {
+    properties: {
+      description: {
+        type: "textarea",
+        components: {
+          edit: MyTextField, // 필드 커스터마이즈 등록
+          show: MyTextField, // 필드 커스터마이즈 등록
+        },
+      },
+    },
+  },
+}
+
 const adminBro = new AdminBro({
   databases: [mongoose],
   rootPath: "/admin",
+  resources: [postResource, commentResource],
 });
 
 // 관리자 계정 정보
