@@ -11,6 +11,7 @@ const s3Client = new S3Client({
 
 const deleteImage = async (imageUrl) => {
   try {
+    console.log(imageUrl, "imageUrl");
     const imageUrlArray = imageUrl.split("/");
     const bucketName = imageUrlArray[2].split(".")[0];
     const key = imageUrlArray.slice(3).join("/");
@@ -27,7 +28,8 @@ const deleteImage = async (imageUrl) => {
     console.log("Image deleted successfully");
   } catch (err) {
     console.error("Error deleting image:", err);
-    throw new HttpError("Failed to delete image");
+    const error = new HttpError("Failed to delete image");
+    next(error);
   }
 };
 

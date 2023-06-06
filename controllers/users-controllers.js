@@ -403,7 +403,9 @@ const changeProfileImage = async (req, res, next) => {
     return next(error);
   }
 
-  deleteImage(user.image);
+  if (user.image !== DEFAULT_PROFILE_IMAGE_URL) {
+    deleteImage(user.image);
+  }
   user.image = image;
   user.save();
 
