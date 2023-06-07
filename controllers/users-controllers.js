@@ -17,7 +17,7 @@ const generateToken = async (user) => {
     token = await jwt.sign(
       { userId: user.id, email: user.email },
       process.env.JWT_SECRET_KEY,
-      { expiresIn: "30s" }
+      { expiresIn: "12h" }
     );
   } catch (err) {
     const error = new HttpError(
