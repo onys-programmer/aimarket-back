@@ -16,11 +16,6 @@ const checkProfileImageExists = (req, res, next) => {
         const error = new HttpError("Failed to upload image.", 500);
         return next(error);
       }
-      checkFileExtension(req, res, () => {
-        uploadProfileImage(req, res, () => {
-          return next();
-        });
-      });
     }
   });
 }

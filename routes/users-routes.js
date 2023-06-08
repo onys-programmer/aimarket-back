@@ -14,6 +14,8 @@ const {
 
 const checkAuth = require("../middleware/check-auth");
 const checkProfileImageExists = require("../middleware/check-profile-image-exists");
+const checkFileExtension = require("../middleware/check-file-extension");
+const uploadProfileImage = require("../middleware/upload-profile-image");
 
 const router = express.Router();
 
@@ -37,6 +39,15 @@ router.post(
   findPassword,
 )
 
+router.patch(
+  "/change-profile-image",
+  checkProfileImageExists,
+  checkAuth,
+  checkFileExtension,
+  uploadProfileImage,
+  changeProfileImage
+);
+
 router.use(checkAuth);
 
 router.post(
@@ -46,10 +57,6 @@ router.post(
 );
 router.patch("/", changePassword);
 router.delete("/", deleteUser);
-router.patch(
-  "/change-profile-image",
-  checkProfileImageExists,
-  changeProfileImage
-);
+
 
 module.exports = router;
