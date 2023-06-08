@@ -37,12 +37,6 @@ router.post(
   findPassword,
 )
 
-router.patch(
-  "/change-profile-image",
-  checkProfileImageExists,
-  changeProfileImage
-);
-
 router.use(checkAuth);
 
 router.post(
@@ -52,5 +46,10 @@ router.post(
 );
 router.patch("/", changePassword);
 router.delete("/", deleteUser);
+router.patch(
+  "/change-profile-image",
+  checkProfileImageExists,
+  changeProfileImage
+);
 
 module.exports = router;
