@@ -24,6 +24,7 @@ module.exports = (req, res, next) => {
     console.log('err.name: ', err.name);
 
     if (err.name === 'TokenExpiredError') {
+      console.log("this is token expired error");
       // 토큰이 만료된 경우 401 Unauthorized 응답 전송
       return res.status(401).json({ message: '토큰이 만료되었습니다.' });
     }
