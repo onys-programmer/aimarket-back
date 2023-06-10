@@ -43,8 +43,15 @@ router.patch(
   "/change-profile-image",
   checkProfileImageExists,
   checkAuth,
-  checkFileExtension,
-  uploadProfileImage,
+  (req, res, next) => {
+    if (req.file) {
+      checkFileExtension();
+      uploadProfileImage();
+      next();
+    } else {
+      next();
+    }
+  },
   changeProfileImage
 );
 

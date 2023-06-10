@@ -1,7 +1,5 @@
 const multer = require('multer');
 const upload = multer().single('image');
-const checkFileExtension = require('./check-file-extension');
-const uploadProfileImage = require('./upload-profile-image');
 
 const checkProfileImageExists = (req, res, next) => {
   upload(req, res, async (err) => {
