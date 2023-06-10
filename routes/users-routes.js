@@ -45,14 +45,15 @@ router.patch(
   checkAuth,
   (req, res, next) => {
     if (req.file) {
-      checkFileExtension();
-      uploadProfileImage();
-      next();
+      checkFileExtension(req, res, () => {
+        uploadProfileImage(req, res, () => {
+          changeProfileImage(req, res, next);
+        });
+      });
     } else {
-      next();
+      changeProfileImage(req, res, next);
     }
-  },
-  changeProfileImage
+  }
 );
 
 router.use(checkAuth);
