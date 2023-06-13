@@ -204,8 +204,10 @@ const updatePost = async (req, res, next) => {
     return next(error);
   }
 
-  deleteImage(post.image);
-  deleteImage(post.thumbnail);
+  if (post.image !== originalImage) {
+    deleteImage(post.image);
+    deleteImage(post.thumbnail);
+  }
 
   post.title = title;
   post.description = description;
