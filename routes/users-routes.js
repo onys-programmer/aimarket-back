@@ -24,6 +24,17 @@ router.get("/:uid", getUserById);
 router.post(
   "/signup",
   checkProfileImageExists,
+  (req, res, next) => {
+    if (req.file) {
+      checkFileExtension(req, res, () => {
+        uploadProfileImage(req, res, () => {
+          next();
+        });
+      });
+    } else {
+      next();
+    }
+  },
   signUp
 );
 router.post(

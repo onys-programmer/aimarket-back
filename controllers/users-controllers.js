@@ -59,6 +59,7 @@ const signUp = async (req, res, next) => {
   console.log('signUp is running');
   const { name, email, password, memorableDate, image } = req.body;
   // console.log(req.body)
+  console.log(image);
   if (
     !image ||
     !email?.includes('@') ||
