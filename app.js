@@ -53,7 +53,7 @@ const postResource = {
       },
     },
   },
-}
+};
 
 const adminBro = new AdminBro({
   databases: [mongoose],
@@ -116,7 +116,7 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
-  if (res.headerSent) {
+  if (res.headersSent) {
     return next(error);
   }
   res
