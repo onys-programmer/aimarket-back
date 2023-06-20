@@ -34,18 +34,18 @@ const getUserById = async (req, res, next) => {
   const userId = req.params.uid;
   try {
     const user = await User.findById(userId)
-      .select('-password')
-      .populate('posts')
+      .select("-password")
+      .populate("posts")
       .populate({
-        path: 'comments',
+        path: "comments",
         populate: {
-          path: 'creator',
-          select: '-password'
-        }
-      })
+          path: "creator",
+          select: "-password",
+        },
+      });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
 
     res.status(200).json({ user });
@@ -56,13 +56,13 @@ const getUserById = async (req, res, next) => {
 };
 
 const signUp = async (req, res, next) => {
-  console.log('signUp is running');
+  console.log("signUp is running");
   const { name, email, password, memorableDate, image } = req.body;
   // console.log(req.body)
   console.log(image);
   if (
     !image ||
-    !email?.includes('@') ||
+    !email?.includes("@") ||
     password.length < 6 ||
     memorableDate.length !== 8 ||
     !memorableDate.match(/^[0-9]+$/)
@@ -131,7 +131,7 @@ const signUp = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   const { email, password } = req.body;
-  console.log('login is running');
+  console.log("login is running");
   // console.log(email, password);
   let existingUser;
   try {
@@ -243,14 +243,16 @@ const deleteUser = async (req, res, next) => {
     return next(error);
   }
 
-  try {
-    await deleteImage(user.image);
-  } catch (err) {
-    const error = new HttpError(
-      `Deleting image failed. Error: ${err.message}`,
-      500
-    );
-    return next(error);
+  if (user.image !== DEFAULT_PROFILE_IMAGE_URL) {
+    try {
+      await deleteImage(user.image);
+    } catch (err) {
+      const error = new HttpError(
+        `Deleting image failed. Error: ${err.message}`,
+        500
+      );
+      return next(error);
+    }
   }
 
   let posts;
@@ -324,12 +326,12 @@ const findPassword = async (req, res, next) => {
     // 이메일로 사용자 찾기
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
 
     // 기억에 남는 날짜 비교
     if (existingUser.memorableDate !== memorableDate) {
-      return res.status(400).json({ message: 'Invalid memorable date' });
+      return res.status(400).json({ message: "Invalid memorable date" });
     }
 
     // 새 비밀번호 생성
@@ -340,13 +342,13 @@ const findPassword = async (req, res, next) => {
       existingUser.password = await bcrypt.hash(newPassword, 12);
       await existingUser.save();
     } catch (err) {
-      return res.status(500).json({ message: 'Failed to hash password' });
+      return res.status(500).json({ message: "Failed to hash password" });
     }
 
     // 비밀번호 반환
     res.status(200).json({ password: newPassword });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to find password' });
+    res.status(500).json({ message: "Failed to find password" });
   }
 };
 
@@ -411,7 +413,7 @@ const changeProfileImage = async (req, res, next) => {
   user.save();
 
   res.status(200).json({ message: "Profile image changed successfully." });
-}
+};
 
 exports.getUserById = getUserById;
 exports.signUp = signUp;
