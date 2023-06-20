@@ -316,7 +316,6 @@ const deleteUser = async (req, res, next) => {
     return next(error);
   }
   res.status(200).json({ message: `User deleted.: ${userId}` });
-  next();
 };
 
 const findPassword = async (req, res, next) => {
